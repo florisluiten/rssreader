@@ -370,7 +370,7 @@ Rssreader.prototype.refreshFeed = function (feedIndex) {
     reader.getFeed(
         reader.settings.feeds[feedIndex],
         function (xml) {
-            reader.settings.feeds[feedIndex].feed = reader.xmlToFeed(xml);
+            reader.updateFeed(feedIndex, reader.xmlToFeed(xml));
 
             reader.storeSettings();
 
@@ -460,6 +460,41 @@ Rssreader.prototype.userFeedback = function (feedback) {
 
     $('#feedback .inner').html(feedback);
     reader.UI.dialog("feedback").show();
+};
+
+/**
+ * Update feed with new data
+ *
+ * @param {integer} feedIndex The feed index
+ * @param {object}  feed      Feed object as returned by xmlToFeed
+ *
+ * @return false if feedIndex does not exist, true otherwise
+ */
+Rssreader.prototype.updateFeed = function (feedIndex, feedObject) {
+    var reader = this,
+        latestArticle;
+
+    if (reader.settings.feeds[feedIndex] === undefined) {
+        return false;
+    }
+
+    if (reader.settings.feeds[feedIndex].feed === undefined) {
+        reader.settings.feeds[feedIndex].feed = feedObject;
+
+        return true;
+    }
+
+    latestArticle = reader.settings.feeds[feedIndex].feed.articles[0];
+
+    $.each(feedObject.articles, function (i) {
+        if (feedObject.articles[i].link == latestArticle.link) {
+            return false; //break
+        };
+
+        reader.settings.feeds[feedIndex].feed.articles.unshift(feedObject.articles[i]);
+    });
+
+    reader.settings.feeds[feedIndex].feed.title = feedObject.title;
 };
 
 /**
