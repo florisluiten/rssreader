@@ -46,7 +46,7 @@ Rssreader.prototype.attachFeed = function (feedIndex) {
 
     $feed.empty();
 
-    if (typeof reader.settings.feeds[feedIndex].feed === 'undefined') {
+    if (reader.settings.feeds[feedIndex].feed === undefined) {
         return false;
     }
 
@@ -85,7 +85,7 @@ Rssreader.prototype.getFeed = function (feed, onSuccess) {
                 console.log('Retreived data for "' + feed.url + '"');
             }
 
-            onSuccess(feed, $(data));
+            onSuccess($(data));
         },
         error: function (error) {
             console.log('Failed to retreive feed: ' + feed.url, error);
@@ -338,8 +338,6 @@ Rssreader.prototype.openFeed = function (feedIndex) {
  * Refresh all feeds simultaneous by calling refreshFeed for each
  * feed in the settings
  *
- * @TODO implement queue
- *
  * @return void
  */
 Rssreader.prototype.refreshFeeds = function () {
@@ -371,7 +369,7 @@ Rssreader.prototype.refreshFeed = function (feedIndex) {
 
     reader.getFeed(
         reader.settings.feeds[feedIndex],
-        function (feed, xml) {
+        function (xml) {
             reader.settings.feeds[feedIndex].feed = reader.xmlToFeed(xml);
 
             reader.storeSettings();
@@ -413,7 +411,7 @@ Rssreader.prototype.storeSettings = function () {
 
     var reader = this;
 
-    localStorage['settings'] = JSON.stringify(reader.settings);
+    localStorage.settings = JSON.stringify(reader.settings);
 };
 
 /**
@@ -426,19 +424,19 @@ Rssreader.prototype.loadSettings = function () {
 
     var reader = this;
 
-    if (typeof localStorage['settings'] === 'undefined') {
+    if (localStorage.settings === undefined) {
         this.storeSettings();
     } else {
         try {
-            reader.settings = JSON.parse(localStorage['settings']);
+            reader.settings = JSON.parse(localStorage.settings);
         } catch (e) {
             console.log(e);
         }
     }
 
     $.each(reader.settings.feeds, function (i) {
-        if (typeof reader.settings.feeds[i]['signature'] === 'undefined') {
-            reader.settings.feeds[i]['signature'] = btoa(reader.settings.feeds[i].url);
+        if (reader.settings.feeds[i].signature === undefined) {
+            reader.settings.feeds[i].signature = btoa(reader.settings.feeds[i].url);
 
             if (reader.settings.debug) {
                 console.log(
