@@ -1,0 +1,15 @@
+{
+    "name": "rssreader.florisluiten",
+    "description": "Clean RSS reader",
+    "architecture": "all",
+    "title": "RSSreader",
+    "hooks": {
+        "RSSreader": {
+            "apparmor": "RSSreader.apparmor",
+            "desktop": "RSSreader.desktop"
+        }
+    },
+    "version": "0.1",
+    "maintainer": "Floris Luiten <ubuntu@lenwweb.nl>",
+    "framework": "ubuntu-sdk-14.10"
+}

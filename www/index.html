@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>RSS Reader</title>
+	<meta name="description" content="Clean RSS reader">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+
+	<link href="/usr/share/ubuntu-html5-ui-toolkit/0.1/ambiance/css/appTemplate.css" rel="stylesheet" type="text/css" />
+
+	<link rel="stylesheet" href="css/app.css" type="text/css" />
+
+	<script src="/usr/share/ubuntu-html5-ui-toolkit/0.1/ambiance/js/fast-buttons.js"></script>
+	<script src="/usr/share/ubuntu-html5-ui-toolkit/0.1/ambiance/js/core.js"></script>
+	<script src="/usr/share/ubuntu-html5-ui-toolkit/0.1/ambiance/js/buttons.js"></script>
+	<script src="/usr/share/ubuntu-html5-ui-toolkit/0.1/ambiance/js/dialogs.js"></script>
+	<script src="/usr/share/ubuntu-html5-ui-toolkit/0.1/ambiance/js/page.js"></script>
+	<script src="/usr/share/ubuntu-html5-ui-toolkit/0.1/ambiance/js/pagestacks.js"></script>
+	<script src="/usr/share/ubuntu-html5-ui-toolkit/0.1/ambiance/js/tab.js"></script>
+	<script src="/usr/share/ubuntu-html5-ui-toolkit/0.1/ambiance/js/tabs.js"></script>
+
+	<script src="js/jquery.min.js"></script>
+</head>
+<body>
+
+	<div data-role="mainview">
+		<header data-role="header">
+			<button style="display: block; float: right" id="display_settings" data-role="tabs-btn"></button>
+		</header>
+
+		<div data-role="content">
+			<div data-role="pagestack">
+				<!-- Index page, shows all the feeds -->
+				<div data-role="page" id="main" data-title="RSS Reader">
+					<div data-role="list" id="feeds">
+					</div>
+				</div>
+
+				<!-- Feed page, shows the articles for the specified feed -->
+				<div data-role="page" id="feed" data-title="Feed">
+					<div data-role="list" id="articles">
+						<ul>
+						</ul>
+					</div>
+				</div>
+
+				<!-- Article, shows the specified article for the specified feed -->
+				<div data-role="page" id="article" data-title="Article">
+					<div></div>
+				</div>
+
+				<div data-role="page" id="settings" data-title="Settings">
+					<section class="article">
+						<h2>Settings</h2>
+						<h3>Add new feed</h3>
+						<p>
+							Add a new feed by supplying a resource. This should be an URL. If you ommit the protocol, "http://" is prefixed
+						</p>
+						<p>
+							<button data-role="button" class="positive" id="add_feed" style="width: 200px">Add a feed</button>
+						</p>
+						<h3>Clear settings</h3>
+						<p>
+							Clearing all settings will remove all feeds and any settings specified.
+						</p>
+						<p>
+							<button data-role="button" id="clear_all" style="width: 200px">Clear all feeds</button>
+						</p>
+					</section>
+				</div>
+			</div>
+
+			<div data-role="dialog" id="add_feed_dialog">
+				<section>
+					<h2>Add a new feed</h2>
+					<input type="url" class="location" placeholder="URL of the feed">
+					<menu>
+						<button data-role="button" class="negative cancel">Cancel</button>
+						<button data-role="button" class="positive submit">Add</button>
+					</menu>
+				</section>
+			</div>
+
+			<div data-role="dialog" id="loading"><section><progress></progress></section></div>
+
+			<div data-role="dialog" id="feedback">
+				<section>
+					<p class="larger inner"></p>
+					<menu>
+						<button data-role="button" class="positive" id="close_feedback">Close</button>
+					</menu>
+				</section>
+			</div>
+		</div>
+	</div>
+
+	<script src="js/rssreader.js"></script>
+	<script>
+		var app = new Rssreader(UbuntuUI);
+		app.init();
+	</script>
+</body>
+</html>
