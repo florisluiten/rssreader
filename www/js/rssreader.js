@@ -322,6 +322,12 @@ Rssreader.prototype.openFeed = function (feedIndex) {
         $content,
         $articles = $('#articles>ul');
 
+    $articles.empty();
+
+    if (reader.settings.debug) {
+        console.log('Opening feed with feedIndex ' + feedIndex);
+    }
+
     $.each(reader.settings.feeds[feedIndex].feed.articles, function (articleIndex) {
         $content = $('<a />');
 
