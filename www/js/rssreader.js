@@ -176,7 +176,7 @@ Rssreader.prototype.initAddFeedDialog = function () {
         $('#add_feed_dialog').hide();
     });
 
-    $('#add_feed_dialog .submit').click(function () {
+    $('#add_feed_dialog form').submit(function () {
         reader.UI.dialog("loading").show();
 
         var $location = $('#add_feed_dialog').find('.location');
