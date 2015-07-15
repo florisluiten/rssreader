@@ -176,7 +176,9 @@ Rssreader.prototype.initAddFeedDialog = function () {
         $('#add_feed_dialog').hide();
     });
 
-    $('#add_feed_dialog form').submit(function () {
+    $('#add_feed_dialog form').submit(function (e) {
+        e.preventDefault();
+
         reader.UI.dialog("loading").show();
 
         var $location = $('#add_feed_dialog').find('.location');
@@ -208,6 +210,8 @@ Rssreader.prototype.initAddFeedDialog = function () {
                 return false;
             }
         );
+
+        return false;
     });
 };
 
