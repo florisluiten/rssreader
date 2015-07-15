@@ -7,7 +7,8 @@ function Rssreader(UIContext) {
 
     this.settings = {
         debug: false,
-        feeds: []
+        feeds: [],
+        maxArticlesPerFeed: 100
     };
 }
 
@@ -493,6 +494,8 @@ Rssreader.prototype.updateFeed = function (feedIndex, feedObject) {
 
         reader.settings.feeds[feedIndex].feed.articles.unshift(feedObject.articles[i]);
     });
+
+    reader.settings.feeds[feedIndex].feed.articles = reader.settings.feeds[feedIndex].feed.articles.splice(0, reader.settings.maxArticlesPerFeed);
 
     reader.settings.feeds[feedIndex].feed.title = feedObject.title;
 };
