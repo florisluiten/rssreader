@@ -101,7 +101,9 @@ Rssreader.prototype.getFeed = function (feed, onSuccess) {
 
             reader.queueNext();
         }).error(function (error) {
-            console.log('Failed to retreive feed: ' + feed.url, error);
+            if (reader.settings.debug) {
+                console.log('Failed to retreive feed: ' + feed.url, error);
+            }
 
             reader.queueNext();
         });
@@ -256,38 +258,57 @@ Rssreader.prototype.isValidFeed = function (loc, success, error) {
         url: loc
     }).done(function (data) {
         if ($(data).find('channel > title').length !== 1) {
-            console.log('isValidFeed finds inccorect amount of channel > title');
+            if (reader.settings.debug) {
+                console.log('isValidFeed finds inccorect amount of channel > title');
+            }
+
             error();
             return;
         }
 
         if ($(data).find('item').length === 0) {
-            console.log('isValidFeed finds no item elements');
+            if (reader.settings.debug) {
+                console.log('isValidFeed finds no item elements');
+            }
+
             error();
             return;
         }
 
         if ($(data).find('item > title').length === 0) {
-            console.log('isValidFeed finds no item > title elements');
+            if (reader.settings.debug) {
+                console.log('isValidFeed finds no item > title elements');
+            }
+
             error();
             return;
         }
 
         if ($(data).find('item > description').length === 0) {
-            console.log('isValidFeed finds no item > description elements');
+            if (reader.settings.debug) {
+                console.log('isValidFeed finds no item > description elements');
+            }
+
             error();
             return;
         }
         if ($(data).find('item > link').length === 0) {
-            console.log('isValidFeed finds no item > link elements');
+            if (reader.settings.debug) {
+                console.log('isValidFeed finds no item > link elements');
+            }
+
             error();
             return;
         }
-        console.log('isValidFeed success');
+        if (reader.settings.debug) {
+            console.log('isValidFeed success');
+        }
 
         success(loc);
     }).error(function () {
-        console.log('isValidFeed failed AJAX request');
+        if (reader.settings.debug) {
+            console.log('isValidFeed failed AJAX request');
+        }
 
         error();
     });
