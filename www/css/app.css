@@ -79,7 +79,7 @@ h3 {
 .refresh {
     background: url(/usr/share/icons/suru/actions/scalable/reload.svg) no-repeat center center/100% auto;
     border: none;
-    display: none;
+    display: inline-block;
     vertical-align: middle;
     height: 60px;
     width: 24px;
@@ -88,5 +88,4 @@ h3 {
 .refresh.active {
     -webkit-animation: 1s rotate infinite steps(30);
     animation: 1s rotate infinite steps(30);
-    display: inline-block;
 }

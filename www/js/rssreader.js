@@ -154,7 +154,13 @@ Rssreader.prototype.init = function () {
             reader.UI.pagestack.push("settings");
         });
 
-        this.resetFeeds();
+        $('#reload').click(function (e) {
+            e.preventDefault();
+
+            reader.refreshFeeds();
+        });
+
+        reader.resetFeeds();
 
         $.each(reader.settings.feeds, function (feedIndex) {
             reader.attachFeed(feedIndex);
@@ -162,7 +168,7 @@ Rssreader.prototype.init = function () {
         });
 
         if (hasFeeds) {
-            this.refreshFeeds();
+            reader.refreshFeeds();
         } else {
             $('#feeds').append($('<section class="article"><p>You have no feeds yet. Use the menu on the topright to add a new feed. Happy feeding!</p></section>'));
         }
@@ -401,6 +407,10 @@ Rssreader.prototype.refreshFeeds = function () {
 
     var reader = this;
 
+    if (reader.settings.debug) {
+        console.log('Refreshing all feeds');
+    }
+
     $.each(reader.settings.feeds, function (i) {
         reader.refreshFeed(i);
     });
@@ -521,6 +531,10 @@ Rssreader.prototype.queueStart = function () {
     var reader = this;
 
     if (reader.queue.running) {
+        if (reader.settings.debug) {
+            console.log('Queue already running');
+        }
+
         return false;
     }
 
@@ -546,7 +560,7 @@ Rssreader.prototype.queueNext = function () {
         next = reader.queue.queue.shift();
 
     if (next === undefined) {
-        reader.queueRunning = false;
+        reader.queue.running = false;
         $('#reload').removeClass('active');
 
         if (reader.settings.debug) {
