@@ -124,7 +124,8 @@ Rssreader.prototype.init = function () {
         this._initialized = true;
         this.UI = new this._uiContextClass();
 
-        var reader = this;
+        var reader = this,
+            hasFeeds = false;
 
         reader.loadSettings();
 
@@ -157,9 +158,14 @@ Rssreader.prototype.init = function () {
 
         $.each(reader.settings.feeds, function (feedIndex) {
             reader.attachFeed(feedIndex);
+            hasFeeds = true;
         });
 
-        this.refreshFeeds();
+        if (hasFeeds) {
+            this.refreshFeeds();
+        } else {
+            $('#feeds').append($('<section class="article"><p>You have no feeds yet. Use the menu on the topright to add a new feed. Happy feeding!</p></section>'));
+        }
     }
 };
 
