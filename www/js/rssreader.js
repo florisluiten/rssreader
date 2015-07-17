@@ -7,7 +7,7 @@ function Rssreader(UIContext) {
 
     this.settings = {
         ajax: {
-            timeout: 10000,
+            timeout: 30000,
         },
         debug: false,
         feeds: [],
