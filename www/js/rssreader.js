@@ -10,6 +10,11 @@ function Rssreader(UIContext) {
         feeds: [],
         maxArticlesPerFeed: 100
     };
+
+    this.queue = {
+        queue: [],
+        running: false,
+    };
 }
 
 /**
@@ -78,20 +83,28 @@ Rssreader.prototype.getFeed = function (feed, onSuccess) {
         console.log('Getting feed "' + feed.url + '"');
     }
 
-    $.ajax({
-        type: 'GET',
-        url: feed.url,
-        success: function (data) {
-            if (reader.settings.debug) {
-                console.log('Retreived data for "' + feed.url + '"');
-            }
+    reader.queue.queue.push(function () {
+        $.ajax({
+            type: 'GET',
+            url: feed.url,
+            success: function (data) {
+                if (reader.settings.debug) {
+                    console.log('Retreived data for "' + feed.url + '"');
+                }
 
-            onSuccess($(data));
-        },
-        error: function (error) {
-            console.log('Failed to retreive feed: ' + feed.url, error);
-        }
+                onSuccess($(data));
+
+                reader.queueNext();
+            },
+            error: function (error) {
+                console.log('Failed to retreive feed: ' + feed.url, error);
+
+                reader.queueNext();
+            }
+        });
     });
+
+    reader.queueStart();
 };
 
 /**
@@ -457,6 +470,57 @@ Rssreader.prototype.loadSettings = function () {
             }
         }
     });
+};
+
+/**
+ * Start running the queue
+ *
+ * @return boolean True if the queue was started, false otherwise
+ */
+Rssreader.prototype.queueStart = function () {
+    var reader = this;
+
+    if (reader.queue.running) {
+        return false;
+    }
+
+    if (reader.settings.debug) {
+        console.log('Start running the queue');
+    }
+
+    reader.queue.running = true;
+
+    $('#reload').addClass('active');
+
+    window.setTimeout(reader.queueNext(), 100);
+};
+
+/**
+ * Execute the next item in the queue, or stop running the queue if no
+ * more items are queued
+ *
+ * @return boolean true if the queue was stopped, false otherwise
+ */
+Rssreader.prototype.queueNext = function () {
+    var reader = this,
+        next = reader.queue.queue.shift();
+
+    if (next === undefined) {
+        reader.queueRunning = false;
+        $('#reload').removeClass('active');
+
+        if (reader.settings.debug) {
+            console.log('Queue cleared');
+        }
+
+        return;
+    }
+
+    if (reader.settings.debug) {
+        console.log('Executing next in queue');
+    }
+
+    next();
 };
 
 /**
