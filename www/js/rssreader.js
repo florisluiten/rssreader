@@ -6,6 +6,9 @@ function Rssreader(UIContext) {
     this._initialized = false;
 
     this.settings = {
+        ajax: {
+            timeout: 10000,
+        },
         debug: false,
         feeds: [],
         maxArticlesPerFeed: 100
@@ -85,22 +88,22 @@ Rssreader.prototype.getFeed = function (feed, onSuccess) {
 
     reader.queue.queue.push(function () {
         $.ajax({
+            dataType: 'xml',
+            timeout: reader.settings.ajax.timeout,
             type: 'GET',
-            url: feed.url,
-            success: function (data) {
-                if (reader.settings.debug) {
-                    console.log('Retreived data for "' + feed.url + '"');
-                }
-
-                onSuccess($(data));
-
-                reader.queueNext();
-            },
-            error: function (error) {
-                console.log('Failed to retreive feed: ' + feed.url, error);
-
-                reader.queueNext();
+            url: feed.url
+        }).done(function (data) {
+            if (reader.settings.debug) {
+                console.log('Retreived data for "' + feed.url + '"');
             }
+
+            onSuccess($(data));
+
+            reader.queueNext();
+        }).error(function (error) {
+            console.log('Failed to retreive feed: ' + feed.url, error);
+
+            reader.queueNext();
         });
     });
 
@@ -240,51 +243,53 @@ Rssreader.prototype.initAddFeedDialog = function () {
 Rssreader.prototype.isValidFeed = function (loc, success, error) {
     "use strict";
 
+    var reader = this;
+
     if (loc.substr(0, 7) !== 'http://' && loc.substr(0, 8) !== 'https://' && loc.substr(0, 1) !== '/') {
         loc = 'http://' + loc;
     }
 
     $.ajax({
+        dataType: 'xml',
+        timeout: reader.settings.ajax.timeout,
         type: 'GET',
-        url: loc,
-        success: function (data) {
-            if ($(data).find('channel > title').length !== 1) {
-                console.log('isValidFeed finds inccorect amount of channel > title');
-                error();
-                return;
-            }
-
-            if ($(data).find('item').length === 0) {
-                console.log('isValidFeed finds no item elements');
-                error();
-                return;
-            }
-
-            if ($(data).find('item > title').length === 0) {
-                console.log('isValidFeed finds no item > title elements');
-                error();
-                return;
-            }
-
-            if ($(data).find('item > description').length === 0) {
-                console.log('isValidFeed finds no item > description elements');
-                error();
-                return;
-            }
-            if ($(data).find('item > link').length === 0) {
-                console.log('isValidFeed finds no item > link elements');
-                error();
-                return;
-            }
-            console.log('isValidFeed success');
-
-            success(loc);
-        },
-        error: function () {
-            console.log('isValidFeed failed AJAX request');
-
+        url: loc
+    }).done(function (data) {
+        if ($(data).find('channel > title').length !== 1) {
+            console.log('isValidFeed finds inccorect amount of channel > title');
             error();
+            return;
         }
+
+        if ($(data).find('item').length === 0) {
+            console.log('isValidFeed finds no item elements');
+            error();
+            return;
+        }
+
+        if ($(data).find('item > title').length === 0) {
+            console.log('isValidFeed finds no item > title elements');
+            error();
+            return;
+        }
+
+        if ($(data).find('item > description').length === 0) {
+            console.log('isValidFeed finds no item > description elements');
+            error();
+            return;
+        }
+        if ($(data).find('item > link').length === 0) {
+            console.log('isValidFeed finds no item > link elements');
+            error();
+            return;
+        }
+        console.log('isValidFeed success');
+
+        success(loc);
+    }).error(function () {
+        console.log('isValidFeed failed AJAX request');
+
+        error();
     });
 
     return;
@@ -387,7 +392,15 @@ Rssreader.prototype.refreshFeed = function (feedIndex) {
 
     var reader = this;
 
+    if (reader.settings.debug) {
+        console.log('Refresh feed ' + feedIndex);
+    }
+
     if (!reader.settings.feeds[feedIndex].url) {
+        if (reader.settings.debug) {
+            console.log('Feed not found! ' + feedIndex);
+        }
+
         return false;
     }
 
@@ -452,7 +465,7 @@ Rssreader.prototype.loadSettings = function () {
         this.storeSettings();
     } else {
         try {
-            reader.settings = JSON.parse(localStorage.settings);
+            $.extend(true, reader.settings, JSON.parse(localStorage.settings));
         } catch (e) {
             console.log(e);
         }
