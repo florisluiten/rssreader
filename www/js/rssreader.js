@@ -64,7 +64,9 @@ Rssreader.prototype.attachFeed = function (feedIndex) {
 
         reader.openFeed(feedIndex);
     });
+
     $content.append(reader.settings.feeds[feedIndex].feed.title);
+    $content.append($('<span class="ui-li-count">' + reader.settings.feeds[feedIndex].feed.unreadCount + '</span>'));
 
     $('#feeds>ul li[data-count="' + reader.settings.feeds[feedIndex].count + '"]').append($content);
 };
@@ -129,7 +131,7 @@ Rssreader.prototype.init = function () {
 
         reader.loadSettings();
 
-        this.UI.init();
+        reader.UI.init();
 
         reader.UI.pagestack.push("main");
 
@@ -613,13 +615,29 @@ Rssreader.prototype.updateFeed = function (feedIndex, feedObject) {
         return true;
     }
 
+    if (reader.settings.feeds[feedIndex].feed.unreadCount === undefined) {
+        reader.settings.feeds[feedIndex].feed.unreadCount = 0;
+
+        $.each(reader.settings.feeds[feedIndex].feed.articles, function (i) {
+            reader.settings.feeds[feedIndex].feed.articles[i].read = true;
+        });
+    }
+
+    if (!feedObject.articles) {
+        // The update failed, so do nothing
+        return true;
+    }
+
     latestArticle = reader.settings.feeds[feedIndex].feed.articles[0];
 
     $.each(feedObject.articles, function (i) {
+        feedObject.articles[i].read = false;
+
         if (feedObject.articles[i].link == latestArticle.link) {
             return false; //break
         };
 
+        reader.settings.feeds[feedIndex].feed.unreadCount++;
         reader.settings.feeds[feedIndex].feed.articles.unshift(feedObject.articles[i]);
     });
 

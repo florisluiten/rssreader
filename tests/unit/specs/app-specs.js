@@ -10,10 +10,86 @@ describe("RSSreader", function() {
         application = new Rssreader(MockedUIContext);
     });
 
-    it("should have the debug flag disabled", function() {
+    it("should have the debug flag disabled", function () {
         application.init();
 
         expect(application.settings.debug).toBe(false);
     });
 });
 
+describe('RSSreader update', function() {
+    var application;
+
+    var MockedUIContext = function() {}
+    MockedUIContext.prototype.init = function() {
+        this.pagestack = [];
+    };
+
+    beforeEach(function() {
+        application = new Rssreader(MockedUIContext);
+
+        application.init();
+
+        application.settings.feeds = [
+            {
+                url: 'void://example.com',
+                count: 0,
+                feed: {
+                    title: 'Void feed',
+                    articles: [
+                        {
+                            title: 'Title 2',
+                            description: 'Description 2',
+                            link: 'void://example.com/article2'
+                        },
+                        {
+                            title: 'Title 1',
+                            description: 'Description 1',
+                            link: 'void://example.com/article1'
+                        }
+                    ]
+                }
+            }
+        ];
+    });
+
+    it('should add "read" flag (true) to an existing article on update', function () {
+        application.updateFeed(0, {});
+
+        expect(application.settings.feeds[0].feed.articles[0].read).toBe(true);
+        expect(application.settings.feeds[0].feed.articles[1].read).toBe(true);
+        expect(application.settings.feeds[0].feed.unreadCount).toBe(0);
+    });
+
+    it('should set "read" flag (false) for new articles', function () {
+        application.updateFeed(
+            0,
+            {
+                title: 'Void feed',
+                articles: [
+                    {
+                        title: 'Title 4',
+                        description: 'Description 4',
+                        link: 'void://example.com/article4'
+                    },
+                    {
+                        title: 'Title 3',
+                        description: 'Description 3',
+                        link: 'void://example.com/article3'
+                    },
+                    {
+                        title: 'Title 2',
+                        description: 'Description 2',
+                        link: 'void://example.com/article2'
+                    }
+                ]
+            }
+        );
+
+        expect(application.settings.feeds[0].feed.articles[0].read).toBe(false);
+        expect(application.settings.feeds[0].feed.articles[1].read).toBe(false);
+        expect(application.settings.feeds[0].feed.articles[2].read).toBe(true);
+        expect(application.settings.feeds[0].feed.articles[3].read).toBe(true);
+        expect(application.settings.feeds[0].feed.unreadCount).toBe(2);
+    });
+});
