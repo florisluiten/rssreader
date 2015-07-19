@@ -92,4 +92,68 @@ describe('RSSreader update', function() {
         expect(application.settings.feeds[0].feed.articles[3].read).toBe(true);
         expect(application.settings.feeds[0].feed.unreadCount).toBe(2);
     });
+
+    it('should decrease total unread count when an unread article is marked read', function () {
+        application.updateFeed(
+            0,
+            {
+                title: 'Void feed',
+                articles: [
+                    {
+                        title: 'Title 4',
+                        description: 'Description 4',
+                        link: 'void://example.com/article4'
+                    },
+                    {
+                        title: 'Title 3',
+                        description: 'Description 3',
+                        link: 'void://example.com/article3'
+                    },
+                    {
+                        title: 'Title 2',
+                        description: 'Description 2',
+                        link: 'void://example.com/article2'
+                    }
+                ]
+            }
+        );
+
+        expect(application.settings.feeds[0].feed.unreadCount).toBe(2);
+
+        application.markRead(0, 0);
+
+        expect(application.settings.feeds[0].feed.unreadCount).toBe(1);
+    });
+
+    it('should not decrease total unread count when an read article is marked read', function () {
+        application.updateFeed(
+            0,
+            {
+                title: 'Void feed',
+                articles: [
+                    {
+                        title: 'Title 4',
+                        description: 'Description 4',
+                        link: 'void://example.com/article4'
+                    },
+                    {
+                        title: 'Title 3',
+                        description: 'Description 3',
+                        link: 'void://example.com/article3'
+                    },
+                    {
+                        title: 'Title 2',
+                        description: 'Description 2',
+                        link: 'void://example.com/article2'
+                    }
+                ]
+            }
+        );
+
+        expect(application.settings.feeds[0].feed.unreadCount).toBe(2);
+
+        application.markRead(0, 2);
+
+        expect(application.settings.feeds[0].feed.unreadCount).toBe(2);
+    });
 });

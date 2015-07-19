@@ -331,6 +331,32 @@ Rssreader.prototype.isValidFeed = function (loc, success, error) {
 };
 
 /**
+ * Mark an article as read
+ *
+ * @param {integer} feedIndex    The feed index
+ * @param {integer} articleIndex The article index
+ *
+ * @return void
+ */
+Rssreader.prototype.markRead = function (feedIndex, articleIndex) {
+    var reader = this;
+
+    if (reader.settings.feeds[feedIndex].feed.articles[articleIndex].read) {
+        return;
+    }
+
+    reader.settings.feeds[feedIndex].feed.articles[articleIndex].read = true;
+    reader.settings.feeds[feedIndex].feed.unreadCount--;
+
+    $('#feeds>ul li[data-count="' + reader.settings.feeds[feedIndex].count + '"] .ui-li-count').html(
+        reader.settings.feeds[feedIndex].feed.unreadCount
+    );
+
+    reader.storeSettings();
+};
+
+
+/**
  * Open an article and show it
  *
  * @param {integer} feedIndex    The feed index
@@ -344,6 +370,10 @@ Rssreader.prototype.openArticle = function (feedIndex, articleIndex) {
     var $content,
         reader = this,
         article = reader.settings.feeds[feedIndex].feed.articles[articleIndex];
+
+    if (!article.read) {
+        reader.markRead(feedIndex, articleIndex);
+    }
 
     $content = $('<div class="article">');
     $content.append($('<h2 />').html(article.title));
@@ -631,11 +661,11 @@ Rssreader.prototype.updateFeed = function (feedIndex, feedObject) {
     latestArticle = reader.settings.feeds[feedIndex].feed.articles[0];
 
     $.each(feedObject.articles, function (i) {
-        feedObject.articles[i].read = false;
-
         if (feedObject.articles[i].link == latestArticle.link) {
             return false; //break
         };
+
+        feedObject.articles[i].read = false;
 
         reader.settings.feeds[feedIndex].feed.unreadCount++;
         reader.settings.feeds[feedIndex].feed.articles.unshift(feedObject.articles[i]);
