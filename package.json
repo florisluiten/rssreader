@@ -8,7 +8,7 @@
         "grunt-contrib-uglify": "~0.5.0"
     },
     "scripts": {
-        "test": "node -e \"require('grunt').tasks(['jasmine']);\""
+        "test": "nodejs -e \"require('grunt').tasks(['jasmine']);\""
     }
 }
 
