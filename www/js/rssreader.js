@@ -352,6 +352,8 @@ Rssreader.prototype.markRead = function (feedIndex, articleIndex) {
         reader.settings.feeds[feedIndex].feed.unreadCount
     );
 
+    $('#articles li').eq(articleIndex).find('a').removeClass('unread');
+
     reader.storeSettings();
 };
 
@@ -419,6 +421,10 @@ Rssreader.prototype.openFeed = function (feedIndex) {
 
             reader.openArticle(feedIndex, articleIndex);
         });
+
+        if (!reader.settings.feeds[feedIndex].feed.articles[articleIndex].read) {
+            $content.addClass('unread');
+        }
 
         $content.append(reader.settings.feeds[feedIndex].feed.articles[articleIndex].title);
 
