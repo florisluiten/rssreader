@@ -66,7 +66,10 @@ Rssreader.prototype.attachFeed = function (feedIndex) {
     });
 
     $content.append(reader.settings.feeds[feedIndex].feed.title);
-    $content.append($('<span class="ui-li-count">' + reader.settings.feeds[feedIndex].feed.unreadCount + '</span>'));
+
+    if (reader.settings.feeds[feedIndex].feed.unreadCount !== undefined) {
+        $content.append($('<span class="ui-li-count">' + reader.settings.feeds[feedIndex].feed.unreadCount + '</span>'));
+    }
 
     $('#feeds>ul li[data-count="' + reader.settings.feeds[feedIndex].count + '"]').append($content);
 };
