@@ -654,13 +654,11 @@ Rssreader.prototype.updateFeed = function (feedIndex, feedObject) {
         return true;
     }
 
-    if (reader.settings.feeds[feedIndex].feed.unreadCount === undefined) {
-        reader.settings.feeds[feedIndex].feed.unreadCount = 0;
+    reader.settings.feeds[feedIndex].feed.unreadCount = 0;
 
-        $.each(reader.settings.feeds[feedIndex].feed.articles, function (i) {
-            reader.settings.feeds[feedIndex].feed.articles[i].read = true;
-        });
-    }
+    $.each(reader.settings.feeds[feedIndex].feed.articles, function (i) {
+        reader.settings.feeds[feedIndex].feed.articles[i].read = true;
+    });
 
     if (!feedObject.articles) {
         // The update failed, so do nothing
