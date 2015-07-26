@@ -660,7 +660,7 @@ Rssreader.prototype.updateFeed = function (feedIndex, feedObject) {
     $.each(reader.settings.feeds[feedIndex].feed.articles, function (i) {
         if (reader.settings.feeds[feedIndex].feed.articles[i].read === undefined) {
             reader.settings.feeds[feedIndex].feed.articles[i].read = true;
-        } else if (reader.settings.feeds[feedIndex].feed.articles[i].read) {
+        } else if (!reader.settings.feeds[feedIndex].feed.articles[i].read) {
             reader.settings.feeds[feedIndex].feed.unreadCount++;
         }
     });
