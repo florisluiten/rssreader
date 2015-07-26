@@ -642,7 +642,8 @@ Rssreader.prototype.userFeedback = function (feedback) {
  */
 Rssreader.prototype.updateFeed = function (feedIndex, feedObject) {
     var reader = this,
-        latestArticle;
+        latestArticle,
+        newArticles = [];
 
     if (reader.settings.feeds[feedIndex] === undefined) {
         return false;
@@ -657,7 +658,11 @@ Rssreader.prototype.updateFeed = function (feedIndex, feedObject) {
     reader.settings.feeds[feedIndex].feed.unreadCount = 0;
 
     $.each(reader.settings.feeds[feedIndex].feed.articles, function (i) {
-        reader.settings.feeds[feedIndex].feed.articles[i].read = true;
+        if (reader.settings.feeds[feedIndex].feed.articles[i].read === undefined) {
+            reader.settings.feeds[feedIndex].feed.articles[i].read = true;
+        } else if (reader.settings.feeds[feedIndex].feed.articles[i].read) {
+            reader.settings.feeds[feedIndex].feed.unreadCount++;
+        }
     });
 
     if (!feedObject.articles) {
@@ -666,7 +671,6 @@ Rssreader.prototype.updateFeed = function (feedIndex, feedObject) {
     }
 
     latestArticle = reader.settings.feeds[feedIndex].feed.articles[0];
-
     $.each(feedObject.articles, function (i) {
         if (feedObject.articles[i].link == latestArticle.link) {
             return false; //break
@@ -675,8 +679,9 @@ Rssreader.prototype.updateFeed = function (feedIndex, feedObject) {
         feedObject.articles[i].read = false;
 
         reader.settings.feeds[feedIndex].feed.unreadCount++;
-        reader.settings.feeds[feedIndex].feed.articles.unshift(feedObject.articles[i]);
+        newArticles.push(feedObject.articles[i]);
     });
+    reader.settings.feeds[feedIndex].feed.articles = newArticles.concat(reader.settings.feeds[feedIndex].feed.articles);
 
     reader.settings.feeds[feedIndex].feed.articles = reader.settings.feeds[feedIndex].feed.articles.splice(0, reader.settings.maxArticlesPerFeed);
 

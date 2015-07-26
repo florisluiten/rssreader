@@ -7,6 +7,8 @@ describe("RSSreader", function() {
     };
 
     beforeEach(function() {
+		localStorage.clear();
+
         application = new Rssreader(MockedUIContext);
     });
 
@@ -26,6 +28,8 @@ describe('RSSreader update', function() {
     };
 
     beforeEach(function() {
+		localStorage.clear();
+
         application = new Rssreader(MockedUIContext);
 
         application.init();
@@ -156,4 +160,40 @@ describe('RSSreader update', function() {
 
         expect(application.settings.feeds[0].feed.unreadCount).toBe(2);
     });
+
+	it('should load new articles before old articles', function() {
+		expect(application.settings.feeds[0].feed.articles[0].link).toBe('void://example.com/article2');
+		expect(application.settings.feeds[0].feed.articles[1].link).toBe('void://example.com/article1');
+
+        application.updateFeed(
+            0,
+            {
+                title: 'Void feed',
+                articles: [
+                    {
+                        title: 'Title 4',
+                        description: 'Description 4',
+                        link: 'void://example.com/article4'
+                    },
+                    {
+                        title: 'Title 3',
+                        description: 'Description 3',
+                        link: 'void://example.com/article3'
+                    },
+                    {
+                        title: 'Title 2',
+                        description: 'Description 2',
+                        link: 'void://example.com/article2'
+                    }
+                ]
+            }
+        );
+
+		expect(application.settings.feeds[0].feed.articles[0].link).toBe('void://example.com/article4');
+		expect(application.settings.feeds[0].feed.articles[1].link).toBe('void://example.com/article3');
+		expect(application.settings.feeds[0].feed.articles[2].link).toBe('void://example.com/article2');
+		expect(application.settings.feeds[0].feed.articles[3].link).toBe('void://example.com/article1');
+
+		expect(application.settings.feeds[0].feed.articles.length).toBe(4);
+	});
 });
