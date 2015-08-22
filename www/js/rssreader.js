@@ -660,7 +660,7 @@ Rssreader.prototype.updateFeed = function (feedIndex, feedObject) {
     $.each(reader.settings.feeds[feedIndex].feed.articles, function (i) {
         if (reader.settings.feeds[feedIndex].feed.articles[i].read === undefined) {
             reader.settings.feeds[feedIndex].feed.articles[i].read = true;
-        } else if (reader.settings.feeds[feedIndex].feed.articles[i].read) {
+        } else if (!reader.settings.feeds[feedIndex].feed.articles[i].read) {
             reader.settings.feeds[feedIndex].feed.unreadCount++;
         }
     });
@@ -671,6 +671,11 @@ Rssreader.prototype.updateFeed = function (feedIndex, feedObject) {
     }
 
     latestArticle = reader.settings.feeds[feedIndex].feed.articles[0];
+
+    if (latestArticle === undefined) {
+        latestArticle = {link: 'random://only-here-to-prevent-crash-if-no-latest-article'};
+    }
+
     $.each(feedObject.articles, function (i) {
         if (feedObject.articles[i].link == latestArticle.link) {
             return false; //break

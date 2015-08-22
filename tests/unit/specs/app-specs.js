@@ -197,7 +197,27 @@ describe('RSSreader update', function() {
 		expect(application.settings.feeds[0].feed.articles.length).toBe(4);
 	});
 
-    it('should not alter unread count if update yields no new articles', function () {
+    it('should not mess with unread count on updates', function () {
+        application.settings.feeds = [
+            {
+                url: 'void://example.com',
+                count: 0,
+                feed: {
+                    title: 'Void feed',
+                    articles: [
+					]
+				}
+			}
+		];
+
+        application.updateFeed(
+            0,
+            {
+            }
+        );
+
+        expect(application.settings.feeds[0].feed.unreadCount).toBe(0);
+
         application.updateFeed(
             0,
             {
@@ -222,7 +242,11 @@ describe('RSSreader update', function() {
             }
         );
 
-        expect(application.settings.feeds[0].feed.articles.length).toBe(4);
+        expect(application.settings.feeds[0].feed.articles.length).toBe(3);
+        expect(application.settings.feeds[0].feed.unreadCount).toBe(3);
+
+        application.markRead(0, 1);
+
         expect(application.settings.feeds[0].feed.unreadCount).toBe(2);
 
         application.updateFeed(
@@ -230,6 +254,11 @@ describe('RSSreader update', function() {
             {
                 title: 'Void feed',
                 articles: [
+                    {
+                        title: 'Title 5',
+                        description: 'Description 5',
+                        link: 'void://example.com/article5'
+                    },
                     {
                         title: 'Title 4',
                         description: 'Description 4',
@@ -250,6 +279,6 @@ describe('RSSreader update', function() {
         );
 
         expect(application.settings.feeds[0].feed.articles.length).toBe(4);
-        expect(application.settings.feeds[0].feed.unreadCount).toBe(2);
-	});
+        expect(application.settings.feeds[0].feed.unreadCount).toBe(3);
+    });
 });
