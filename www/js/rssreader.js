@@ -11,7 +11,8 @@ function Rssreader(UIContext) {
         },
         debug: false,
         feeds: [],
-        maxArticlesPerFeed: 100
+        maxArticlesPerFeed: 100,
+        allowHtml: true
     };
 
     this.queue = {
@@ -164,6 +165,16 @@ Rssreader.prototype.init = function () {
 
             reader.refreshFeeds();
         });
+
+        $("#articleAllowHtml").on('change', function () {
+            reader.settings.allowHtml = this.checked;
+            reader.storeSettings();
+        });
+        
+        try {
+            $("#articleAllowHtml")[0].checked = reader.settings.allowHtml;
+        } catch (e) {
+        }
 
         reader.resetFeeds();
 
@@ -360,7 +371,6 @@ Rssreader.prototype.markRead = function (feedIndex, articleIndex) {
     reader.storeSettings();
 };
 
-
 /**
  * Open an article and show it
  *
@@ -382,7 +392,13 @@ Rssreader.prototype.openArticle = function (feedIndex, articleIndex) {
 
     $content = $('<div class="article">');
     $content.append($('<h2 />').html(article.title));
-    $content.append($('<p />').text(article.description));
+
+    if (reader.settings.allowHtml) {
+        $content.append($('<p />').html(article.description));
+    } else {
+        $content.append($('<p />').text(article.description));
+    }
+
     $content.append(
         $('<p class="readmore" />').append(
             $('<a />').attr('href', article.link)
@@ -542,6 +558,10 @@ Rssreader.prototype.storeSettings = function () {
     "use strict";
 
     var reader = this;
+
+    if (typeof reader.settings.allowHtml == 'undefined') {
+        reader.settings.allowHtml = true;
+    }
 
     localStorage.settings = JSON.stringify(reader.settings);
 };
