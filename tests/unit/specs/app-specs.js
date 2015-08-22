@@ -196,4 +196,60 @@ describe('RSSreader update', function() {
 
 		expect(application.settings.feeds[0].feed.articles.length).toBe(4);
 	});
+
+    it('should not alter unread count if update yields no new articles', function () {
+        application.updateFeed(
+            0,
+            {
+                title: 'Void feed',
+                articles: [
+                    {
+                        title: 'Title 4',
+                        description: 'Description 4',
+                        link: 'void://example.com/article4'
+                    },
+                    {
+                        title: 'Title 3',
+                        description: 'Description 3',
+                        link: 'void://example.com/article3'
+                    },
+                    {
+                        title: 'Title 2',
+                        description: 'Description 2',
+                        link: 'void://example.com/article2'
+                    }
+                ]
+            }
+        );
+
+        expect(application.settings.feeds[0].feed.articles.length).toBe(4);
+        expect(application.settings.feeds[0].feed.unreadCount).toBe(2);
+
+        application.updateFeed(
+            0,
+            {
+                title: 'Void feed',
+                articles: [
+                    {
+                        title: 'Title 4',
+                        description: 'Description 4',
+                        link: 'void://example.com/article4'
+                    },
+                    {
+                        title: 'Title 3',
+                        description: 'Description 3',
+                        link: 'void://example.com/article3'
+                    },
+                    {
+                        title: 'Title 2',
+                        description: 'Description 2',
+                        link: 'void://example.com/article2'
+                    }
+                ]
+            }
+        );
+
+        expect(application.settings.feeds[0].feed.articles.length).toBe(4);
+        expect(application.settings.feeds[0].feed.unreadCount).toBe(2);
+	});
 });
