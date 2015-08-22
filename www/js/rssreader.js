@@ -482,6 +482,8 @@ Rssreader.prototype.refreshFeed = function (feedIndex) {
         return false;
     }
 
+    reader.setFeedLoading(feedIndex);
+
     reader.getFeed(
         reader.settings.feeds[feedIndex],
         function (xml) {
@@ -512,8 +514,23 @@ Rssreader.prototype.resetFeeds = function () {
     $.each(reader.settings.feeds, function (i) {
         reader.settings.feeds[i].count = i;
 
-        $('#feeds>ul').append('<li data-count="' + i + '"><progress></progress><span class="loading"></span></li>');
+        $('#feeds>ul').append('<li data-count="' + i + '"></li>');
     });
+};
+
+/**
+ * Add "loading" indicator to the feed
+ *
+ * @param {integer} feedIndex The feed index
+ *
+ * @return void
+ */
+Rssreader.prototype.setFeedLoading = function (feedIndex) {
+    "use strict";
+
+    var reader = this;
+
+    $('#feeds>ul li[data-count="' + reader.settings.feeds[feedIndex].count + '"]').append($('<progress style="position: absolute; top: -2px; right: 89px"></progress>'));
 };
 
 /**
@@ -585,8 +602,6 @@ Rssreader.prototype.queueStart = function () {
 
     reader.queue.running = true;
 
-    $('#reload').addClass('active');
-
     window.setTimeout(reader.queueNext(), 100);
 };
 
@@ -602,7 +617,6 @@ Rssreader.prototype.queueNext = function () {
 
     if (next === undefined) {
         reader.queue.running = false;
-        $('#reload').removeClass('active');
 
         if (reader.settings.debug) {
             console.log('Queue cleared');

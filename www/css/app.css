@@ -85,10 +85,6 @@ h3 {
     width: 24px;
     margin: 0 8px;
 }
-.refresh.active {
-    -webkit-animation: 1s rotate infinite steps(30);
-    animation: 1s rotate infinite steps(30);
-}
 .unread {
     font-weight: 600;
 }
