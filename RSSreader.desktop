@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=RSS Reader
 Comment=A clean RSS Reader
-Exec=ubuntu-html5-app-launcher --www=www $@
+Exec=ubuntu-html5-app-launcher --inspector --www=www $@
 Icon=RSSreader.png
 Terminal=false
 Type=Application

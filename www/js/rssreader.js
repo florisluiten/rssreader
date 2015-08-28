@@ -140,10 +140,19 @@ Rssreader.prototype.init = function () {
         reader.UI.pagestack.push("main");
 
         this.initAddFeedDialog();
+
         $('#clear_all').click(function (e) {
             e.preventDefault();
 
+            if (reader.settings.debug) {
+                console.log('Clear entire localStorage');
+            }
+
             localStorage.clear();
+
+            if (reader.settings.debug) {
+                console.log('Reloading window');
+            }
 
             window.location.reload();
         });
@@ -361,14 +370,13 @@ Rssreader.prototype.markRead = function (feedIndex, articleIndex) {
 
     reader.settings.feeds[feedIndex].feed.articles[articleIndex].read = true;
     reader.settings.feeds[feedIndex].feed.unreadCount--;
+    reader.storeSettings();
 
     $('#feeds>ul li[data-count="' + reader.settings.feeds[feedIndex].count + '"] .ui-li-count').html(
         reader.settings.feeds[feedIndex].feed.unreadCount
     );
 
     $('#articles li').eq(articleIndex).find('a').removeClass('unread');
-
-    reader.storeSettings();
 };
 
 /**
@@ -563,7 +571,11 @@ Rssreader.prototype.storeSettings = function () {
         reader.settings.allowHtml = true;
     }
 
-    localStorage.settings = JSON.stringify(reader.settings);
+    if (reader.settings.debug) {
+        console.log('Storing JSON.stringify of reader.settings');
+    }
+
+    localStorage.setItem('settings', JSON.stringify(reader.settings));
 };
 
 /**
@@ -577,6 +589,9 @@ Rssreader.prototype.loadSettings = function () {
     var reader = this;
 
     if (localStorage.settings === undefined) {
+        if (reader.settings.debug) {
+            console.log('Settings is undefined, calling storeSettings()')
+        }
         this.storeSettings();
     } else {
         try {
