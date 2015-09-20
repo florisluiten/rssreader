@@ -398,6 +398,8 @@ Rssreader.prototype.openArticle = function (feedIndex, articleIndex) {
         reader.markRead(feedIndex, articleIndex);
     }
 
+    $('#article').attr('data-title', reader.settings.feeds[feedIndex].feed.title + ' | ' + article.title)
+
     $content = $('<div class="article">');
     $content.append($('<h2 />').html(article.title));
 
@@ -433,6 +435,8 @@ Rssreader.prototype.openFeed = function (feedIndex) {
     var reader = this,
         $content,
         $articles = $('#articles>ul');
+
+    $('#feed').attr('data-title', reader.settings.feeds[feedIndex].feed.title);
 
     $articles.empty();
 
