@@ -352,3 +352,99 @@ describe('RSSreader articles', function() {
 	});
 });
 
+describe('RSSreader articleToSafeID', function() {
+	var application;
+
+	var MockedUIContext = function() {}
+	MockedUIContext.prototype.init = function() {
+		this.pagestack = [];
+	};
+
+	beforeEach(function() {
+		localStorage.clear();
+
+		application = new Rssreader(MockedUIContext);
+    });
+
+    it('should not contain anything but a-z, A-Z, 0-9, -, :, or _', function () {
+        expect(
+            application.articleToSafeID({guid: 'normal string'}).replace(/[a-zA-Z0-9_:-]/g, '')
+        ).toBe('');
+
+        expect(
+            application.articleToSafeID({link: 'http://link.to-somehwere/over-the?rainbow'}).replace(/[a-zA-Z0-9_:-]/g, '')
+        ).toBe('');
+
+        expect(
+            application.articleToSafeID({guid: '`!@#$%^&*()_+-=[]{};\'\\:"|,./<>?'}).replace(/[a-zA-Z0-9_:-]/g, '')
+        ).toBe('');
+    });
+});
+
+describe('RSSreader guid', function() {
+	var application;
+
+	var MockedUIContext = function() {}
+	MockedUIContext.prototype.init = function() {
+		this.pagestack = [];
+	};
+
+	beforeEach(function() {
+		localStorage.clear();
+
+		application = new Rssreader(MockedUIContext);
+
+		application.init();
+
+		application.settings.feeds = [
+			{
+				url: 'void://example.com',
+				count: 0,
+				feed: {
+					title: 'Void feed',
+					articles: [
+						{
+							title: 'Title 2',
+							description: 'Description 2',
+							link: 'void://example.com/article2',
+							guid: 'article2'
+						},
+						{
+							title: 'Title 1',
+							description: 'Description 1',
+							link: 'void://example.com/article1',
+							guid: 'article1'
+						}
+					]
+				}
+			}
+		];
+	});
+
+	it('should be used instead of link', function () {
+		expect(application.settings.feeds[0].feed.articles.length).toBe(2);
+
+		application.updateFeed(
+			0,
+			{
+				title: 'Void feed',
+				articles: [
+					{
+						title: 'Title 3',
+						description: 'Description 3',
+						link: 'void://example.com/article3',
+						guid: 'article3'
+					},
+					{
+						title: 'Title 2',
+						description: 'Description 2 has been updated',
+						link: 'void://example.com/article2-updated',
+						guid: 'article2'
+					}
+				]
+			}
+		);
+
+		expect(application.settings.feeds[0].feed.articles.length).toBe(3);
+	});
+});

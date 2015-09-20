@@ -41,6 +41,47 @@ Rssreader.prototype.addFeed = function (feedlocation) {
 };
 
 /**
+ * Convert a article to an ID that is safe, ie, consists
+ * of only [a-z0-9_:-]. Since it might start with a digit, it should not
+ * be used as CSS ID unless you use a prefix.
+ *
+ * @param {object} article The article
+ *
+ * @return string
+ */
+Rssreader.prototype.articleToSafeID = function (article) {
+    var id,
+        ret = '',
+        t;
+
+    // Prefer guid, since link might change
+    if (article.guid) {
+        id = article.guid;
+    } else {
+        id = article.link;
+    }
+
+    id = id.split('');
+
+    for (var i = 0; i < id.length; i++) {
+        t = id[i].charCodeAt(0);
+
+        if (
+            (t >= 48 && t <= 57) ||
+            (t >= 65 && t <= 90) ||
+            (t >= 97 && t <= 122) ||
+            t == 45 || t == 58
+        ) {
+            ret += id[i];
+        } else {
+            ret += '_' + t;
+        }
+    }
+
+    return ret;
+};
+
+/**
  * Attach a feed to the view.
  *
  * @param {integer} feedIndex The feed index
@@ -73,6 +114,22 @@ Rssreader.prototype.attachFeed = function (feedIndex) {
     }
 
     $('#feeds>ul li[data-count="' + reader.settings.feeds[feedIndex].count + '"]').append($content);
+};
+
+/**
+ * Check if the specified articles are equal
+ *
+ * @param {object} The first article
+ * @param {object} The second article
+ *
+ * @return boolean
+ */
+Rssreader.prototype.articlesEqual = function (first, second) {
+    if (first.guid && second.guid) {
+        return first.guid == second.guid;
+    }
+
+    return first.link == second.link;
 };
 
 /**
@@ -730,7 +787,7 @@ Rssreader.prototype.updateFeed = function (feedIndex, feedObject) {
     }
 
     $.each(feedObject.articles, function (i) {
-        if (feedObject.articles[i].link == latestArticle.link) {
+        if (reader.articlesEqual(latestArticle, feedObject.articles[i])) {
             return false; //break
         };
 
@@ -756,16 +813,25 @@ Rssreader.prototype.updateFeed = function (feedIndex, feedObject) {
 Rssreader.prototype.xmlToFeed = function ($xml) {
     "use strict";
 
-    var articles = [];
+    var reader = this;
+
+    var articles = [],
+        article;
 
     $.each($xml.find('item'), function () {
-        articles.push(
-            {
-                title: $(this).find('title').text(),
-                description: $(this).find('description').text(),
-                link: $(this).find('link').text()
-            }
-        );
+        article = {
+            title: $(this).find('title').text(),
+            description: $(this).find('description').text(),
+            link: $(this).find('link').text()
+        };
+
+        if ($(this).find('guid').length > 0) {
+            article['guid'] = $(this).find('guid').text();
+        }
+
+        article['guid'] = reader.articleToSafeID(article);
+
+        articles.push(article);
     });
 
     return {
