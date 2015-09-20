@@ -66,7 +66,7 @@ Rssreader.prototype.attachFeed = function (feedIndex) {
         reader.openFeed(feedIndex);
     });
 
-    $content.append(reader.settings.feeds[feedIndex].feed.title);
+    $content.text(reader.settings.feeds[feedIndex].feed.title);
 
     if (reader.settings.feeds[feedIndex].feed.unreadCount !== undefined) {
         $content.append($('<span class="ui-li-count">' + reader.settings.feeds[feedIndex].feed.unreadCount + '</span>'));
@@ -457,7 +457,7 @@ Rssreader.prototype.openFeed = function (feedIndex) {
             $content.addClass('unread');
         }
 
-        $content.append(reader.settings.feeds[feedIndex].feed.articles[articleIndex].title);
+        $content.text(reader.settings.feeds[feedIndex].feed.articles[articleIndex].title);
 
         $articles.append($('<li />').append($content));
     });
@@ -769,7 +769,7 @@ Rssreader.prototype.xmlToFeed = function ($xml) {
     });
 
     return {
-        title: $xml.find('channel > title').html(),
+        title: $xml.find('channel > title').text(),
         articles: articles
     };
 };
