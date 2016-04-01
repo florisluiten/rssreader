@@ -76,14 +76,11 @@ h3 {
     line-height: 1.3 !important;
     padding: .7rem 0;
 }
-.refresh {
-    background: url(/usr/share/icons/suru/actions/scalable/reload.svg) no-repeat center center/100% auto;
-    border: none;
-    display: inline-block;
-    vertical-align: middle;
-    height: 60px;
-    width: 24px;
-    margin: 0 8px;
+#reload[data-role="tabs-btn"]:after {
+    background-image: url(/usr/share/icons/suru/actions/scalable/reload.svg);
+}
+[data-role="tabs-btn"] {
+	float: right;
 }
 .unread {
     font-weight: 600;
