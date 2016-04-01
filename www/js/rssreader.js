@@ -104,6 +104,10 @@ Rssreader.prototype.attachFeed = function (feedIndex) {
     $content.attr('href', '#').on('click', function (e) {
         e.preventDefault();
 
+        if ($(this).closest('li').hasClass('ui-draggable-dragging')) {
+            return false;
+        }
+
         reader.openFeed(feedIndex);
     });
 
@@ -600,6 +604,18 @@ Rssreader.prototype.resetFeeds = function () {
         reader.settings.feeds[i].count = i;
 
         $('#feeds>ul').append('<li data-count="' + i + '"></li>');
+    });
+
+    $('#feeds li').draggable({
+        axis: 'x',
+        containment: [0, 0, 50, 0],
+        distance: 10,
+        revert: true,
+        stop: function (event, ui) {
+            if (ui.position.left > 25) {
+                //Show dialog to user to confirm deletion of this feed
+            }
+        }
     });
 };
 
