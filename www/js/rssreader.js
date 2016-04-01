@@ -137,6 +137,39 @@ Rssreader.prototype.articlesEqual = function (first, second) {
 };
 
 /**
+ * Ask user to remove feed
+ *
+ * @param {integer} feedIndex The feed index
+ *
+ * @return void
+ */
+Rssreader.prototype.confirmDeleteFeed = function (feedIndex) {
+    "use strict";
+
+    var reader = this;
+
+    $('#delete_feed_dialog').show().find('p').text('Do you want to delete the feed "' + reader.settings.feeds[feedIndex].feed.title + '"?');
+
+    $('#delete_feed_dialog .cancel').click(function (e) {
+        e.preventDefault();
+
+        $('#delete_feed_dialog').hide();
+    });
+
+    $('#delete_feed_dialog form').submit(function (e) {
+        e.preventDefault();
+
+        reader.settings.feeds.splice(feedIndex, 1);
+
+        $('#delete_feed_dialog').hide();
+
+        reader.storeSettings();
+
+        window.location.reload();
+    });
+};
+
+/**
  * Get the feed via jQuery.ajax
  *
  * @param {object}   the feed object
@@ -613,7 +646,7 @@ Rssreader.prototype.resetFeeds = function () {
         revert: true,
         stop: function (event, ui) {
             if (ui.position.left > 25) {
-                //Show dialog to user to confirm deletion of this feed
+                reader.confirmDeleteFeed($(this).index());
             }
         }
     });
