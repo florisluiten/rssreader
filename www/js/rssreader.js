@@ -173,6 +173,7 @@ Rssreader.prototype.confirmDeleteFeed = function (feedIndex) {
  * A simple draggable implementation. Mimics the jquery UI experience
  * slightly:
  *
+ * - Adds the "ui-draggable-dragging" class while dragging
  * - Limits distance by xaxis.distance
  *
  * @return void
@@ -189,9 +190,18 @@ Rssreader.prototype.draggable = function ($element, xaxis) {
     {
         distance: 10
     }
+    )
+    .on('dragstart', function (e, dd) {
+        $(dd.target).addClass('ui-draggable-dragging');
+    })
+    .on('dragend', function (e, dd) {
 
+        //Timeout is needed for bubbling events
+        window.setTimeout(function () {
+            $(dd.target).removeClass('ui-draggable-dragging');
 
             }
+        }, 10);
     });
 };
 
