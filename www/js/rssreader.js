@@ -639,6 +639,7 @@ Rssreader.prototype.resetFeeds = function () {
         $('#feeds>ul').append('<li data-count="' + i + '"></li>');
     });
 
+    Do not use draggable, but http://threedubmedia.com/code/event/drag#demos
     $('#feeds li').draggable({
         axis: 'x',
         containment: [0, 0, 50, 0],
