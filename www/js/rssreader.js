@@ -366,7 +366,9 @@ Rssreader.prototype.initAddFeedDialog = function () {
         $('#add_feed_dialog').show().find('.location').focus();
     });
 
-    $('#add_feed_dialog .cancel').click(function () {
+    $('#add_feed_dialog .cancel').click(function (e) {
+        e.preventDefault();
+
         $('#add_feed_dialog').hide();
     });
 
