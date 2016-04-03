@@ -176,6 +176,7 @@ Rssreader.prototype.confirmDeleteFeed = function (feedIndex) {
  * - Resets position of the element to the start position
  * - Adds the "ui-draggable-dragging" class while dragging
  * - Limits distance by xaxis.distance
+ * - Executes xaxis.function if dragged > xaxis.distance / 2
  *
  * @return void
  */
@@ -206,6 +207,8 @@ Rssreader.prototype.draggable = function ($element, xaxis) {
         window.setTimeout(function () {
             $(dd.target).removeClass('ui-draggable-dragging');
 
+            if (dd.offsetX > (xaxis.distance / 2)) {
+                xaxis.function(dd.target);
             }
         }, 10);
     });
@@ -685,8 +688,8 @@ Rssreader.prototype.resetFeeds = function () {
         $('#feeds li'),
         {
             distance: 50,
-            function: function () {
-                reader.confirmDeleteFeed($(this).index());
+            function: function (element) {
+                reader.confirmDeleteFeed($(element).index());
             }
         }
     );
