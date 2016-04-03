@@ -169,6 +169,27 @@ Rssreader.prototype.confirmDeleteFeed = function (feedIndex) {
     });
 };
 
+Rssreader.prototype.draggable = function ($element, xaxis) {
+    $element.drag(function(ev, dd) {
+        $(this).css({left: dd.offsetX});
+    });
+/*
+
+
+    Do not use draggable, but http://threedubmedia.com/code/event/drag#demos
+    $('#feeds li').draggable({
+        axis: 'x',
+        containment: [0, 0, 50, 0],
+        distance: 10,
+        revert: true,
+        stop: function (event, ui) {
+            if (ui.position.left > 25) {
+            }
+        }
+    });
+    */
+};
+
 /**
  * Get the feed via jQuery.ajax
  *
@@ -639,18 +660,15 @@ Rssreader.prototype.resetFeeds = function () {
         $('#feeds>ul').append('<li data-count="' + i + '"></li>');
     });
 
-    Do not use draggable, but http://threedubmedia.com/code/event/drag#demos
-    $('#feeds li').draggable({
-        axis: 'x',
-        containment: [0, 0, 50, 0],
-        distance: 10,
-        revert: true,
-        stop: function (event, ui) {
-            if (ui.position.left > 25) {
+    reader.draggable(
+        $('#feeds li'),
+        {
+            distance: 50,
+            function: function () {
                 reader.confirmDeleteFeed($(this).index());
             }
         }
-    });
+    );
 };
 
 /**

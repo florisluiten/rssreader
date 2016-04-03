@@ -4,7 +4,7 @@ module.exports = function(grunt) {
             src: 'www/js/rssreader.js',
             options: {
                 specs: 'tests/unit/specs/*specs.js',
-                vendor: 'www/js/jquery.min.js'
+                vendor: ['www/js/jquery.min.js', 'www/js/jquery.event.drag-2.2.js']
             }
         }
     });
