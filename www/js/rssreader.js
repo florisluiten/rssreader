@@ -180,6 +180,11 @@ Rssreader.prototype.confirmDeleteFeed = function (feedIndex) {
 Rssreader.prototype.draggable = function ($element, xaxis) {
     $element.drag(
     function(e, dd) {
+        $(this).css(
+            {
+                left: Math.max(0, Math.min(dd.offsetX, xaxis.distance))
+            }
+        );
     },
     {
         distance: 10
