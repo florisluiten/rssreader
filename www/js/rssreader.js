@@ -118,6 +118,11 @@ Rssreader.prototype.attachFeed = function (feedIndex) {
         $content.append($('<span class="ui-li-count">' + reader.settings.feeds[feedIndex].feed.unreadCount + '</span>'));
     }
 
+    $del.click(function(e) {
+        e.preventDefault();
+
+        reader.confirmDeleteFeed(feedIndex);
+    });
 
     $('#feeds>ul li[data-count="' + reader.settings.feeds[feedIndex].count + '"]')
         .append($del)
