@@ -85,7 +85,7 @@ h3 {
 .unread {
     font-weight: 600;
 }
-#feeds li:before {
+#feeds li .delete {
 	display: block;
 	width: 50px;
 	height: 100%;
