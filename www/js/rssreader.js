@@ -154,6 +154,8 @@ Rssreader.prototype.confirmDeleteFeed = function (feedIndex) {
         e.preventDefault();
 
         $('#delete_feed_dialog').hide();
+
+        $('#delete_feed_dialog form').off('submit');
     });
 
     $('#delete_feed_dialog form').submit(function (e) {
@@ -366,8 +368,12 @@ Rssreader.prototype.initAddFeedDialog = function () {
         $('#add_feed_dialog').show().find('.location').focus();
     });
 
-    $('#add_feed_dialog .cancel').click(function () {
+    $('#add_feed_dialog .cancel').click(function (e) {
+        e.preventDefault();
+
         $('#add_feed_dialog').hide();
+
+        $('#add_feed_dialog form').off('submit');
     });
 
     $('#add_feed_dialog form').submit(function (e) {
@@ -388,8 +394,8 @@ Rssreader.prototype.initAddFeedDialog = function () {
         reader.isValidFeed(
             $location.val(),
             function (loc) {
-                reader.addFeed(loc);
                 reader.userFeedback('Feed has been added');
+                reader.addFeed(loc);
 
                 reader.UI.dialog("loading").hide();
 
