@@ -94,7 +94,7 @@ Rssreader.prototype.attachFeed = function (feedIndex) {
     var reader = this,
         $content = $('<a />'),
         $feed = $('#feeds>ul li[data-count="' + reader.settings.feeds[feedIndex].count + '"]'),
-        $del = $('<div class="delete swipe-reveal"></div>');
+        $del = $('<div class="delete swipe-reveal"><img src="/usr/share/icons/suru/actions/scalable/delete.svg" /></div>');
 
     $feed.empty();
 
