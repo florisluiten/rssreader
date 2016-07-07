@@ -460,54 +460,22 @@ Rssreader.prototype.isValidFeed = function (loc, success, error) {
         type: 'GET',
         url: loc
     }).done(function (data) {
-        if ($(data).find('channel > title').length !== 1) {
-            if (reader.settings.debug) {
-                console.log('isValidFeed finds inccorect amount of channel > title');
-            }
+        var type = 'rss';
 
+        if (!reader.isValidRssFeed(data)) {
             error();
             return;
-        }
 
-        if ($(data).find('item').length === 0) {
-            if (reader.settings.debug) {
-                console.log('isValidFeed finds no item elements');
+            if (!reader.isValidAtomFeed(data)) {
+                error();
+
+                return;
             }
 
-            error();
-            return;
+            type = 'atom';
         }
 
-        if ($(data).find('item > title').length === 0) {
-            if (reader.settings.debug) {
-                console.log('isValidFeed finds no item > title elements');
-            }
-
-            error();
-            return;
-        }
-
-        if ($(data).find('item > description').length === 0) {
-            if (reader.settings.debug) {
-                console.log('isValidFeed finds no item > description elements');
-            }
-
-            error();
-            return;
-        }
-        if ($(data).find('item > link').length === 0) {
-            if (reader.settings.debug) {
-                console.log('isValidFeed finds no item > link elements');
-            }
-
-            error();
-            return;
-        }
-        if (reader.settings.debug) {
-            console.log('isValidFeed success');
-        }
-
-        success(loc);
+        success(loc, type);
     }).error(function () {
         if (reader.settings.debug) {
             console.log('isValidFeed failed AJAX request');
@@ -517,6 +485,65 @@ Rssreader.prototype.isValidFeed = function (loc, success, error) {
     });
 
     return;
+};
+
+/**
+ * Check if the passed data is a valid RSS feed
+ *
+ * @param {object} data The data as DOM object
+ *
+ * @return boolean
+ */
+Rssreader.prototype.isValidRssFeed = function (data) {
+    "use strict";
+
+    var reader = this;
+
+    if ($(data).find('channel > title').length !== 1) {
+        if (reader.settings.debug) {
+            console.log('isValidRssFeed finds inccorect amount of channel > title');
+        }
+
+        return false;
+    }
+
+    if ($(data).find('item').length === 0) {
+        if (reader.settings.debug) {
+            console.log('isValidRssFeed finds no item elements');
+        }
+
+        return false;
+    }
+
+    if ($(data).find('item > title').length === 0) {
+        if (reader.settings.debug) {
+            console.log('isValidRssFeed finds no item > title elements');
+        }
+
+        return false;
+    }
+
+    if ($(data).find('item > description').length === 0) {
+        if (reader.settings.debug) {
+            console.log('isValidRssFeed finds no item > description elements');
+        }
+
+        return false;
+    }
+
+    if ($(data).find('item > link').length === 0) {
+        if (reader.settings.debug) {
+            console.log('isValidRssFeed finds no item > link elements');
+        }
+
+        return false;
+    }
+
+    if (reader.settings.debug) {
+        console.log('isValidRssFeed success');
+    }
+
+    return true;
 };
 
 /**
