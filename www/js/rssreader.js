@@ -463,9 +463,6 @@ Rssreader.prototype.isValidFeed = function (loc, success, error) {
         var type = 'rss';
 
         if (!reader.isValidRssFeed(data)) {
-            error();
-            return;
-
             if (!reader.isValidAtomFeed(data)) {
                 error();
 
@@ -487,6 +484,64 @@ Rssreader.prototype.isValidFeed = function (loc, success, error) {
     return;
 };
 
+/**
+ * Check if the passed data is a valid atom feed
+ *
+ * @param {object} data The data as DOM object
+ *
+ * @return boolean
+ */
+Rssreader.prototype.isValidAtomFeed = function (data) {
+    "use strict";
+
+    var reader = this;
+
+    if ($(data).find('feed > title').length !== 1) {
+        if (reader.settings.debug) {
+            console.log('isValidAtomFeed finds incorrect amount of feed > title');
+        }
+
+        return false;
+    }
+
+    if ($(data).find('entry').length === 0) {
+        if (reader.settings.debug) {
+            console.log('isValidAtomFeed finds no entry elements');
+        }
+
+        return false;
+    }
+
+    if ($(data).find('entry > title').length === 0) {
+        if (reader.settings.debug) {
+            console.log('isValidAtomFeed finds no entry > title elements');
+        }
+
+        return false;
+    }
+
+    if ($(data).find('entry > content').length === 0) {
+        if (reader.settings.debug) {
+            console.log('isValidAtomFeed finds no entry > content elements');
+        }
+
+        return false;
+    }
+
+    if ($(data).find('entry > link').length === 0) {
+        if (reader.settings.debug) {
+            console.log('isValidAtomFeed finds no entry > link elements');
+        }
+
+        return false;
+    }
+
+    if (reader.settings.debug) {
+        console.log('isValidAtomFeed success');
+    }
+
+    return true;
+};
 /**
  * Check if the passed data is a valid RSS feed
  *
