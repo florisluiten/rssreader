@@ -1024,6 +1024,13 @@ Rssreader.prototype.xmlToFeed = function ($xml, feedType) {
         guidElement = 'guid',
         titleElement = 'channel > title';
 
+    if (feedType == 'atom') {
+        itemElement = 'entry';
+        descriptionElement = 'content';
+        guidElement = 'id';
+        titleElement = 'feed > title';
+    }
+
     $.each($xml.find(itemElement), function () {
         article = {
             title: $(this).find('title').text(),
