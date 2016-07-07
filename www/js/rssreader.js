@@ -93,7 +93,8 @@ Rssreader.prototype.attachFeed = function (feedIndex) {
 
     var reader = this,
         $content = $('<a />'),
-        $feed = $('#feeds>ul li[data-count="' + reader.settings.feeds[feedIndex].count + '"]');
+        $feed = $('#feeds>ul li[data-count="' + reader.settings.feeds[feedIndex].count + '"]'),
+        $del = $('<div class="delete swipe-reveal"><img src="/usr/share/icons/suru/actions/scalable/delete.svg" /></div>');
 
     $feed.empty();
 
@@ -117,7 +118,19 @@ Rssreader.prototype.attachFeed = function (feedIndex) {
         $content.append($('<span class="ui-li-count">' + reader.settings.feeds[feedIndex].feed.unreadCount + '</span>'));
     }
 
-    $('#feeds>ul li[data-count="' + reader.settings.feeds[feedIndex].count + '"]').append($content);
+    $del.click(function(e) {
+        e.preventDefault();
+
+        reader.confirmDeleteFeed(feedIndex);
+    });
+
+    $('#feeds>ul li[data-count="' + reader.settings.feeds[feedIndex].count + '"]')
+        .append($del)
+        .append($content);
+
+    reader.draggable(
+        $('#feeds>ul li[data-count="' + reader.settings.feeds[feedIndex].count + '"]')
+    );
 };
 
 /**
@@ -154,6 +167,8 @@ Rssreader.prototype.confirmDeleteFeed = function (feedIndex) {
         e.preventDefault();
 
         $('#delete_feed_dialog').hide();
+
+        $('#delete_feed_dialog form').off('submit');
     });
 
     $('#delete_feed_dialog form').submit(function (e) {
@@ -170,22 +185,28 @@ Rssreader.prototype.confirmDeleteFeed = function (feedIndex) {
 };
 
 /**
- * A simple draggable implementation. Mimics the jquery UI experience
- * slightly:
+ * A simple draggable implementation. Auto finds elements with the class
+ * swipe-reveal. The first found element is revealed when swiping to the
+ * left, the second element is not implemented yet @TODO
+ * The element is displayed if it has been swiped in 50% or more
  *
- * - Resets position of the element to the start position
- * - Adds the "ui-draggable-dragging" class while dragging
- * - Limits distance by xaxis.distance
- * - Executes xaxis.function if dragged > xaxis.distance / 2
- *
- * @return void
+ * @return True if attached, false if already attached
  */
-Rssreader.prototype.draggable = function ($element, xaxis) {
+Rssreader.prototype.draggable = function ($element) {
+    var leftWidth = $element.find('.swipe-reveal').first().width();
+
+    if ($element.hasClass('ui-draggable-init')) {
+        return false;
+    }
+
+    $element.addClass('ui-draggable-init');
+
     $element.drag(
     function(e, dd) {
+
         $(this).css(
             {
-                left: Math.max(0, Math.min(dd.offsetX, xaxis.distance))
+                left: Math.max(0, Math.min(dd.offsetX, leftWidth))
             }
         );
     },
@@ -197,19 +218,21 @@ Rssreader.prototype.draggable = function ($element, xaxis) {
         $(dd.target).addClass('ui-draggable-dragging');
     })
     .on('dragend', function (e, dd) {
+        var left = 0;
+
+        if (dd.offsetX > (leftWidth / 2)) {
+            left = leftWidth;
+        }
+
         $(dd.target).css(
             {
-                left: 0
+                left: left
             }
         );
 
         //Timeout is needed for bubbling events
         window.setTimeout(function () {
             $(dd.target).removeClass('ui-draggable-dragging');
-
-            if (dd.offsetX > (xaxis.distance / 2)) {
-                xaxis.function(dd.target);
-            }
         }, 10);
     });
 };
@@ -370,6 +393,8 @@ Rssreader.prototype.initAddFeedDialog = function () {
         e.preventDefault();
 
         $('#add_feed_dialog').hide();
+
+        $('#add_feed_dialog form').off('submit');
     });
 
     $('#add_feed_dialog form').submit(function (e) {
@@ -390,8 +415,8 @@ Rssreader.prototype.initAddFeedDialog = function () {
         reader.isValidFeed(
             $location.val(),
             function (loc) {
-                reader.addFeed(loc);
                 reader.userFeedback('Feed has been added');
+                reader.addFeed(loc);
 
                 reader.UI.dialog("loading").hide();
 
@@ -685,16 +710,6 @@ Rssreader.prototype.resetFeeds = function () {
 
         $('#feeds>ul').append('<li data-count="' + i + '"></li>');
     });
-
-    reader.draggable(
-        $('#feeds li'),
-        {
-            distance: 50,
-            function: function (element) {
-                reader.confirmDeleteFeed($(element).index());
-            }
-        }
-    );
 };
 
 /**

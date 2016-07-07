@@ -85,12 +85,19 @@ h3 {
 .unread {
     font-weight: 600;
 }
-#feeds li:before {
-	display: block;
-	width: 50px;
-	height: 100%;
-	content: '.';
-	position: absolute;
-	left: -50px;
-	background: red url(/usr/share/icons/suru/actions/scalable/delete.svg) no-repeat center center/25px auto;
+#feeds li .delete {
+    display: block;
+    width: 50px;
+    height: 100%;
+    content: '.';
+    position: absolute;
+    left: -50px;
+    border-bottom: solid 0.1rem #c7c7c7;
+}
+#feeds li .delete > img {
+    width: 35px;
+    left: 7.5px;
+    position: relative;
+    top: 50%;
+    margin-top: -17.5px;
 }
