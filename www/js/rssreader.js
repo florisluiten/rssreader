@@ -919,23 +919,27 @@ Rssreader.prototype.updateFeed = function (feedIndex, feedObject) {
  *
  * @return object with attributes: title
  */
-Rssreader.prototype.xmlToFeed = function ($xml) {
+Rssreader.prototype.xmlToFeed = function ($xml, feedType) {
     "use strict";
 
     var reader = this;
 
     var articles = [],
-        article;
+        article,
+        itemElement = 'item',
+        descriptionElement = 'description',
+        guidElement = 'guid',
+        titleElement = 'channel > title';
 
-    $.each($xml.find('item'), function () {
+    $.each($xml.find(itemElement), function () {
         article = {
             title: $(this).find('title').text(),
-            description: $(this).find('description').text(),
+            description: $(this).find(descriptionElement).text(),
             link: $(this).find('link').text()
         };
 
-        if ($(this).find('guid').length > 0) {
-            article['guid'] = $(this).find('guid').text();
+        if ($(this).find(guidElement).length > 0) {
+            article['guid'] = $(this).find(guidElement).text();
         }
 
         article['guid'] = reader.articleToSafeID(article);
@@ -944,7 +948,7 @@ Rssreader.prototype.xmlToFeed = function ($xml) {
     });
 
     return {
-        title: $xml.find('channel > title').text(),
+        title: $xml.find(titleElement).text(),
         articles: articles
     };
 };
