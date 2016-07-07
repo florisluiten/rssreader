@@ -26,13 +26,14 @@ function Rssreader(UIContext) {
  *
  * @return true
  */
-Rssreader.prototype.addFeed = function (feedlocation) {
+Rssreader.prototype.addFeed = function (feedlocation, type) {
     "use strict";
 
     var reader = this;
 
     reader.settings.feeds.push({
-        url: feedlocation
+        url: feedlocation,
+        type: type
     });
 
     reader.storeSettings();
@@ -414,9 +415,9 @@ Rssreader.prototype.initAddFeedDialog = function () {
 
         reader.isValidFeed(
             $location.val(),
-            function (loc) {
+            function (loc, type) {
                 reader.userFeedback('Feed has been added');
-                reader.addFeed(loc);
+                reader.addFeed(loc, type);
 
                 reader.UI.dialog("loading").hide();
 
@@ -763,7 +764,7 @@ Rssreader.prototype.refreshFeed = function (feedIndex) {
     reader.getFeed(
         reader.settings.feeds[feedIndex],
         function (xml) {
-            reader.updateFeed(feedIndex, reader.xmlToFeed(xml));
+            reader.updateFeed(feedIndex, reader.xmlToFeed(xml, reader.settings.feeds[feedIndex].type));
 
             reader.storeSettings();
 
