@@ -749,7 +749,7 @@ Rssreader.prototype.storeSettings = function () {
 };
 
 /**
- * load the settings and set signature on each feed
+ * load the settings and set type and signature on each feed
  *
  * @return void
  */
@@ -779,6 +779,16 @@ Rssreader.prototype.loadSettings = function () {
                 console.log(
                     'Setting feed signature for "' + reader.settings.feeds[i].url
                         + '" to "' + reader.settings.feeds[i].signature + '"'
+                );
+            }
+        }
+
+        if (reader.settings.feeds[i].type === undefined) {
+            reader.settings.feeds[i].type = 'rss';
+
+            if (reader.settings.debug) {
+                console.log(
+                    'Setting feed type to rss for "' + reader.settings.feeds[i].url + "'"
                 );
             }
         }
