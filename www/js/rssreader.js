@@ -486,6 +486,33 @@ Rssreader.prototype.isValidFeed = function (loc, success, error) {
 };
 
 /**
+ * Check if the passed string is a valid import file, containing at least
+ * one feed
+ *
+ * @param {string} data The string to check
+ *
+ * @return boolean
+ */
+Rssreader.prototype.isValidImport = function (data) {
+    var foundAtLeastOneFeed = false;
+
+    try {
+        $xml = $(data);
+    } catch (e) {
+        return false;
+    }
+
+    $xml.find('outline').each(function () {
+        if ($(this).attr('type') === 'rss' && typeof $(this).attr('xmlUrl') !== 'undefined') {
+            foundAtLeastOneFeed = true;
+            return false;
+        }
+    });
+
+    return foundAtLeastOneFeed;
+};
+
+/**
  * Check if the passed data is a valid atom feed
  *
  * @param {object} data The data as DOM object
