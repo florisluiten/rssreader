@@ -500,6 +500,13 @@ describe('RSSreader import ', function() {
 
 	it('should retreive three feeds from validOpml', function () {
 		expect(application.isValidImport(validOpml)).toBe(true);
+
+		var feeds = application.import(validOpml);
+
+		expect(feeds.length).toBe(3);
+		expect(feeds[0].url).toBe('https://software.intel.com/en-us/articles/feed/');
+		expect(feeds[1].url).toBe('https://www.blackhat.com/BlackHatRSS.xml');
+		expect(feeds[2].url).toBe('http://googleprojectzero.blogspot.com/feeds/posts/default?alt=rss');
 	});
 
 	it('should expect at least one feed with type "rss"', function () {

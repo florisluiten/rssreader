@@ -282,6 +282,45 @@ Rssreader.prototype.getFeed = function (feed, onSuccess) {
 };
 
 /**
+ * Import all feeds from the specified string. Use isValidImport to check
+ * if the specified string is a valid import string and holds any feeds
+ *
+ * @param {string} data The data as a string
+ *
+ * @return array with imported feeds
+ */
+Rssreader.prototype.import = function (data) {
+    "use strict";
+
+    var reader = this,
+        feeds = [];
+
+    try {
+        $xml = $(data);
+    } catch (e) {
+        return false;
+    }
+
+    $xml.find('outline').each(function () {
+        if ($(this).attr('type') === 'rss' && typeof $(this).attr('xmlUrl') !== 'undefined') {
+            feeds.push({
+                url: $(this).attr('xmlUrl'),
+                type: 'rss'
+            });
+
+            reader.settings.feeds.push({
+                url: $(this).attr('xmlUrl'),
+                type: 'rss'
+            });
+        }
+    });
+
+    reader.storeSettings();
+
+    return feeds;
+};
+
+/**
  * Initializer
  *
  * @return void
