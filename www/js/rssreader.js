@@ -300,6 +300,33 @@ Rssreader.prototype.handleExport = function () {
 }
 
 /**
+ * Handle the file uploaded for import
+ *
+ * @param {object} ev The event as passed by the browser
+ *
+ * @return void
+ */
+Rssreader.prototype.handleFileImport = function (evt) {
+    var reader = this,
+        files = evt.target.files;
+
+    fileReader = new FileReader();
+
+    fileReader.onload = function (evt) {
+        if (reader.isValidImport(evt.target.result)) {
+            reader.import(evt.target.result);
+            window.location.reload();
+        } else {
+            reader.userFeedback('The file is not a valid OPML file, or contains no feeds I understand. Sorry');
+        }
+    }
+
+    for (var i = 0, f; f = files[i]; i++) {
+        fileReader.readAsText(f);
+    }
+}
+
+/**
  * Import all feeds from the specified string. Use isValidImport to check
  * if the specified string is a valid import string and holds any feeds
  *
@@ -361,6 +388,7 @@ Rssreader.prototype.init = function () {
 
         this.initAddFeedDialog();
         this.initExportDialog();
+        this.initImportDialog();
 
         $('#clear_all').click(function (e) {
             e.preventDefault();
@@ -511,6 +539,23 @@ Rssreader.prototype.initExportDialog = function () {
 }
 
 /**
+ * Initialize the import dialog
+ *
+ * @return void
+ */
+Rssreader.prototype.initImportDialog = function () {
+    var reader = this;
+
+    $('#import').click(function(e) {
+        $('#importFile').click();
+    });
+
+    $('#importFile').change(function(file) {
+        reader.handleFileImport(file);
+    });
+}
+
+/**
  * Check if feed is valid
  *
  * @param {string}   loc     The location to check
@@ -567,20 +612,44 @@ Rssreader.prototype.isValidFeed = function (loc, success, error) {
  * @return boolean
  */
 Rssreader.prototype.isValidImport = function (data) {
-    var foundAtLeastOneFeed = false;
+    var reader = this,
+        foundAtLeastOneFeed = false;
+
+    if (reader.settings.debug) {
+        console.log('isValidImport was called');
+    }
 
     try {
         $xml = $(data);
+
+        if (reader.settings.debug) {
+            console.log('isValidImport has found some parsable object');
+        }
     } catch (e) {
+        if (reader.settings.debug) {
+            console.log('isValidImport was passed a non-parsable object');
+        }
         return false;
     }
 
     $xml.find('outline').each(function () {
+        if (reader.settings.debug) {
+            console.log('isValidImport found a outline');
+        }
+
         if ($(this).attr('type') === 'rss' && typeof $(this).attr('xmlUrl') !== 'undefined') {
+            if (reader.settings.debug) {
+                console.log('isValidImport found a valid feed');
+            }
+
             foundAtLeastOneFeed = true;
             return false;
         }
     });
+
+    if (reader.settings.debug) {
+        console.log('isValidImport result: ', foundAtLeastOneFeed);
+    }
 
     return foundAtLeastOneFeed;
 };
