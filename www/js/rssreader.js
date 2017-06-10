@@ -282,6 +282,24 @@ Rssreader.prototype.getFeed = function (feed, onSuccess) {
 };
 
 /**
+ * Handle the export
+ *
+ * @return void
+ */
+Rssreader.prototype.handleExport = function () {
+    var reader = this,
+        $form = $('<form method="post" action="https://rssreader.florisluiten.nl/export" />');
+
+    $.each(reader.settings.feeds, function (feedIndex) {
+        $form.append($('<input type="hidden">').attr('name', feedIndex).attr('value', reader.settings.feeds[feedIndex].url));
+    });
+
+    $form.append($('<input type="submit">'));
+    $('body').append($form);
+    $form.submit();
+}
+
+/**
  * Import all feeds from the specified string. Use isValidImport to check
  * if the specified string is a valid import string and holds any feeds
  *
@@ -342,6 +360,7 @@ Rssreader.prototype.init = function () {
         reader.UI.pagestack.push("main");
 
         this.initAddFeedDialog();
+        this.initExportDialog();
 
         $('#clear_all').click(function (e) {
             e.preventDefault();
@@ -475,6 +494,21 @@ Rssreader.prototype.initAddFeedDialog = function () {
         return false;
     });
 };
+
+/**
+ * Initialize the export dialog
+ *
+ * @return void
+ */
+Rssreader.prototype.initExportDialog = function () {
+    var reader = this;
+
+    $('#export').click(function(e) {
+        e.preventDefault();
+
+        reader.handleExport();
+    });
+}
 
 /**
  * Check if feed is valid
