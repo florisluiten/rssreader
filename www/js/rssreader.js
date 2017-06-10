@@ -288,7 +288,7 @@ Rssreader.prototype.getFeed = function (feed, onSuccess) {
  */
 Rssreader.prototype.handleExport = function () {
     var reader = this,
-        $form = $('<form method="post" action="https://rssreader.florisluiten.nl/export" />');
+        $form = $('<form method="get" action="https://rssreader.florisluiten.nl/export" />');
 
     $.each(reader.settings.feeds, function (feedIndex) {
         $form.append($('<input type="hidden">').attr('name', feedIndex).attr('value', reader.settings.feeds[feedIndex].url));
