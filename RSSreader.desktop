@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=RSS Reader
 Comment=A clean RSS Reader
-Exec=webapp-container ./www/index.html
+Exec=webapp-container --local-content-can-access-remote-urls ./www/index.html
 Icon=RSSreader.png
 Terminal=false
 Type=Application
