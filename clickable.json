@@ -1,4 +1,3 @@
 {
-  "template":"pure",
-  "dependencies":["morph-webapp-container", "morph-browser"]
+  "template" : "pure"
 }
