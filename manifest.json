@@ -9,7 +9,7 @@
             "desktop": "RSSreader.desktop"
         }
     },
-    "version": "0.2.4",
-    "maintainer": "Floris Luiten <ubuntu@lenwweb.nl>",
-    "framework": "ubuntu-sdk-15.04.6"
+    "version": "0.3.0",
+    "maintainer": "Floris Luiten <ubuntu@u0192.nl>",
+    "framework": "ubuntu-sdk-16.04"
 }
